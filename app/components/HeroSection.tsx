@@ -106,7 +106,6 @@ const HeroSection: React.FC = () => {
       />
       <div className="max-w-6xl mx-auto" ref={textRef}>
         <div className="relative h-24">
-          {" "}
           {/* Fixed height container for smooth transitions */}
           <AnimatePresence mode="popLayout">
             <motion.h1
@@ -153,7 +152,9 @@ const HeroSection: React.FC = () => {
             </span>
             <span>Contact Me</span>
           </motion.a>
-          <motion.button
+          <motion.a
+            href="/sanskar-resume.pdf"
+            download={"Sanskar_Sharma_Resume.pdf"}
             className="flex gap-1 bg-accentPurple2 hover:bg-accentPurple3 transition-colors items-center px-6 rounded-lg text-sm py-2"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
@@ -162,7 +163,7 @@ const HeroSection: React.FC = () => {
               <Download size={15} />
             </span>
             <span>Download Resume</span>
-          </motion.button>
+          </motion.a>
         </motion.div>
       </div>
     </div>
