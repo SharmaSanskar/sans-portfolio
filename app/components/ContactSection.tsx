@@ -3,6 +3,7 @@
 import React, { useRef, useState } from "react";
 import { Mail, Github, BookOpen, Twitter, Linkedin } from "lucide-react";
 import { motion, useInView } from "framer-motion";
+import emailjs from "@emailjs/browser";
 
 const ContactSection = () => {
   const sectionRef = useRef(null);
@@ -14,9 +15,28 @@ const ContactSection = () => {
     message: "",
   });
 
+  const [status, setStatus] = useState(""); // Status message for feedback
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
+
+    const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || "";
+    const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || "";
+    const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_ID || "";
+
+    const templateParams = {
+      from_name: formData.name,
+      from_email: formData.email,
+      message: formData.message,
+    };
+
+    emailjs
+      .send(serviceId, templateId, templateParams, publicKey)
+      .then(() => {
+        setStatus("Message sent successfully!");
+        setFormData({ name: "", email: "", message: "" }); // Reset form
+      })
+      .catch(() => setStatus("Failed to send message. Try again later."));
   };
 
   const handleChange = (e) => {
@@ -174,6 +194,7 @@ const ContactSection = () => {
               >
                 Send Message
               </motion.button>
+              {status && <p className="text-sm mt-2 text-center">{status}</p>}
             </form>
           </div>
         </div>
