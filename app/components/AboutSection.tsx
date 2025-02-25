@@ -108,16 +108,25 @@ const AboutSection = () => {
           className="space-y-6 text-base sm:text-xl font-normal mb-12 w-full sm:w-3/4 mx-auto px-4 sm:px-0"
         >
           <p>
-            Hey there, my name is Sanskar Sharma. I am a Software Developer
-            based out of Boston, currently pursuing my Masters degree in
-            Computer Science.
+            Hey there! I’m Sanskar Sharma—a software developer, problem-solver,
+            , and professional Googler of obscure errors. Currently, I’m in
+            Boston, pursuing my Master’s in Computer Science at Northeastern
+            University (which basically means balancing code, coffee, and the
+            occasional existential crisis over semicolons).
           </p>
           <p>
-            I have developed a number of full stack applications over the past
-            few years using modern web technologies for both my undergraduate
-            work and personal projects. I enjoy technology because it gives me
-            the opportunity to continually learn and explore new areas such as
-            UI/UX design, web development, and machine learning.
+            I’ve built full-stack applications using modern web technologies,
+            working on everything from sleek UIs to efficient backend systems. I
+            love making things work—whether that’s debugging an application or
+            figuring out why my WiFi suddenly hates me. Machine learning? Web
+            development? UI/UX? If it’s tech, I’m in.
+          </p>
+          <p>
+            When I’m not knee-deep in code, I’m probably geeking out over the
+            latest tech trends, rewatching The Office for the millionth time, or
+            embarking on an endless quest to find the best coffee in town. Let’s
+            create something cool—and maybe even write documentation for it (but
+            no promises).
           </p>
         </motion.div>
 

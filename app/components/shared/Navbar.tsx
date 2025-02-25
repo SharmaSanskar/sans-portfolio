@@ -37,15 +37,15 @@ function Navbar() {
   return (
     <>
       {/* Desktop Navigation - Fixed at top */}
-      <nav className="hidden md:block bg-accentPurple1 px-10 py-3 rounded-xl shadow-xl shadow-black/20">
+      <nav className="hidden md:block bg-accentPurple1 px-10 rounded-xl shadow-xl shadow-black/20">
         <ul className="flex items-center gap-10">
           {navItems.map((item) => (
             <a
               key={item.id}
               href={`#${item.id}`}
-              className={`hover:scale-105 hover:text-fontSecondary cursor-pointer transition-all ${
+              className={`hover:scale-105 hover:text-fontSecondary cursor-pointer transition-all py-3 ${
                 activeSection === item.id
-                  ? "text-fontSecondary font-medium"
+                  ? "text-fontSecondary font-medium border-b-2 border-fontSecondary"
                   : ""
               }`}
             >
@@ -56,15 +56,15 @@ function Navbar() {
       </nav>
 
       {/* Mobile Navigation - Fixed at bottom */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-accentPurple1 shadow-xl shadow-black/20 z-[200]">
-        <ul className="flex items-center justify-between px-4 py-3">
+      <nav className="md:hidden fixed border-t border-fontSecondary bottom-0 left-0 right-0 w-screen bg-accentPurple1 shadow-xl shadow-black/20 z-[200] overflow-hidden">
+        <ul className="flex items-center justify-around">
           {navItems.map((item) => (
             <a
               key={item.id}
               href={`#${item.id}`}
-              className={`flex flex-col items-center gap-1 text-sm ${
+              className={`flex flex-col items-center gap-1 text-sm py-3 ${
                 activeSection === item.id
-                  ? "text-fontSecondary scale-110 font-medium"
+                  ? "text-fontSecondary font-medium"
                   : ""
               }`}
             >

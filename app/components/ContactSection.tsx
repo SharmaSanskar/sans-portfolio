@@ -100,7 +100,7 @@ const ContactSection = () => {
 
   return (
     <div
-      className="relative min-h-[70vh] p-4 md:p-8"
+      className="relative min-h-[80vh] p-4 md:p-8"
       ref={sectionRef}
       id="contact"
     >
