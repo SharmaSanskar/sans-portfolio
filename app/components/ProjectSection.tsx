@@ -12,7 +12,7 @@ const ProjectCard = ({ project, index }) => {
   return (
     <motion.div
       ref={projectRef}
-      className={`flex flex-col md:flex-row items-center bg-accentPurple1 shadow-lg shadow-black/20 text-fontPrimary rounded-2xl px-4 sm:px-12 py-4 ${
+      className={`flex flex-col md:flex-row items-center bg-accentPurple1-light dark:bg-accentPurple1 shadow-lg shadow-black/20 text-fontPrimary-light dark:text-fontPrimary rounded-2xl px-4 sm:px-12 py-4 ${
         index % 2 === 0 ? "" : "md:flex-row-reverse"
       }`}
       initial={{
@@ -35,7 +35,7 @@ const ProjectCard = ({ project, index }) => {
     >
       <motion.div className="relative w-full md:w-1/2 h-40 sm:h-52 mb-4 md:mb-0">
         <motion.div
-          className="absolute top-0 left-0 w-5/6 h-full rounded-xl shadow-2xl shadow-bgDark"
+          className="absolute top-0 left-0 w-5/6 h-full rounded-xl shadow-2xl shadow-bgDark-light dark:shadow-bgDark"
           initial={{
             rotateY: -30,
             rotateZ: -3,
@@ -60,7 +60,7 @@ const ProjectCard = ({ project, index }) => {
           />
         </motion.div>
         <motion.div
-          className="absolute top-0 left-4 sm:left-8 w-5/6 h-full rounded-xl shadow-2xl shadow-bgDark"
+          className="absolute top-0 left-4 sm:left-8 w-5/6 h-full rounded-xl shadow-2xl shadow-bgDark-light dark:shadow-bgDark"
           initial={{
             rotateY: 30,
             rotateZ: 3,
@@ -95,7 +95,7 @@ const ProjectCard = ({ project, index }) => {
             href={project.githubLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex gap-1 bg-accentPurple2 hover:bg-accentPurple3 transition-colors items-center px-4 sm:px-6 rounded-lg text-sm py-2"
+            className="flex gap-1 bg-accentPurple2-light dark:bg-accentPurple2 hover:bg-accentPurple3-light dark:hover:bg-accentPurple3 transition-colors items-center px-4 sm:px-6 rounded-lg text-sm py-2 text-fontPrimary-light dark:text-fontPrimary"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
@@ -139,25 +139,32 @@ const projects = [
 
 const ProjectSection = () => {
   return (
-    <section className="relative min-h-screen p-4 sm:p-8" id="projects">
+    <section
+      className="relative min-h-screen p-4 sm:p-8 bg-bgDark-light dark:bg-bgDark"
+      id="projects"
+    >
       <div className="hidden md:flex absolute -left-12 items-center top-1/2 -translate-y-1/2">
         <div className="transform -rotate-90 text-4xl tracking-widest font-bold flex items-center gap-3">
-          <div className="w-1 h-1 bg-accentPurple4"></div>
-          <div className="w-12 h-1 bg-accentPurple4"></div>
-          <h1 className="font">PROJECTS</h1>
+          <div className="w-1 h-1 bg-accentPurple4-light dark:bg-accentPurple4"></div>
+          <div className="w-12 h-1 bg-accentPurple4-light dark:bg-accentPurple4"></div>
+          <h1 className="font text-fontPrimary-light dark:text-fontPrimary">
+            PROJECTS
+          </h1>
         </div>
       </div>
 
       {/* Mobile title */}
       <div className="md:hidden text-center mb-14">
-        <h1 className="text-3xl font-bold tracking-widest">PROJECTS</h1>
+        <h1 className="text-3xl font-bold tracking-widest text-fontPrimary-light dark:text-fontPrimary">
+          PROJECTS
+        </h1>
         <div className="flex justify-center gap-2 mt-2">
-          <div className="w-12 h-1 bg-accentPurple4"></div>
-          <div className="w-1 h-1 bg-accentPurple4"></div>
+          <div className="w-12 h-1 bg-accentPurple4-light dark:bg-accentPurple4"></div>
+          <div className="w-1 h-1 bg-accentPurple4-light dark:bg-accentPurple4"></div>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         <div className="flex flex-col gap-16 sm:gap-28">
           {projects.map((project, index) => (
             <ProjectCard key={index} project={project} index={index} />

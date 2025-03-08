@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion, useAnimation, AnimatePresence } from "framer-motion";
 import { Download, ChevronRight } from "lucide-react";
+import ThemeToggle from "../components/shared/ThemeToggle";
 
 const HeroSection: React.FC = () => {
   const [animationComplete, setAnimationComplete] = useState(false);
@@ -81,38 +82,41 @@ const HeroSection: React.FC = () => {
 
   return (
     <div
-      className="relative min-h-screen flex items-center p-4 sm:p-8 overflow-hidden"
+      className="relative min-h-screen flex items-center p-4 sm:p-8 overflow-hidden bg-bgDark-light dark:bg-bgDark"
       id="home"
     >
+      {/* Theme Toggle */}
+      <ThemeToggle />
+
       {/* Blobs with lower z-index */}
       <motion.div
-        className="absolute bottom-16 right-8 sm:right-64 w-24 sm:w-32 h-24 sm:h-32 bg-accentPurple1 rounded-full z-0"
+        className="absolute bottom-16 right-8 sm:right-64 w-24 sm:w-32 h-24 sm:h-32 bg-accentPurple1-light dark:bg-accentPurple1 rounded-full z-0"
         initial={{ scale: 0, opacity: 0 }}
         animate={blob1Controls}
       />
       <motion.div
-        className="absolute -right-8 bottom-80 sm:bottom-16 sm:-left-16 w-32 sm:w-48 h-32 sm:h-48 bg-accentPurple2 rounded-full z-0"
+        className="absolute -right-8 bottom-80 sm:bottom-16 sm:-left-16 w-32 sm:w-48 h-32 sm:h-48 bg-accentPurple2-light dark:bg-accentPurple2 rounded-full z-0"
         initial={{ scale: 0, opacity: 0 }}
         animate={blob2Controls}
       />
       <motion.div
-        className="hidden md:block absolute bottom-48 sm:bottom-80 -right-4 sm:-right-6 w-48 sm:w-64 h-48 sm:h-64 bg-accentPurple3 rounded-full z-0"
+        className="hidden md:block absolute bottom-48 sm:bottom-80 -right-4 sm:-right-6 w-48 sm:w-64 h-48 sm:h-64 bg-accentPurple3-light dark:bg-accentPurple3 rounded-full z-0"
         initial={{ scale: 0, opacity: 0 }}
         animate={blob3Controls}
       />
       <motion.div
-        className="absolute bottom-20 left-4 sm:bottom-72 sm:left-10 w-12 sm:w-16 h-12 sm:h-16 bg-accentPurple4 rounded-full z-0"
+        className="absolute bottom-20 left-4 sm:bottom-72 sm:left-10 w-12 sm:w-16 h-12 sm:h-16 bg-accentPurple4-light dark:bg-accentPurple4 rounded-full z-0"
         initial={{ scale: 0, opacity: 0 }}
         animate={blob4Controls}
       />
 
       {/* Content with higher z-index */}
-      <div className="max-w-6xl mx-auto w-full relative z-10" ref={textRef}>
+      <div className="max-w-4xl mx-auto w-full relative z-10" ref={textRef}>
         <div className="relative h-16 sm:h-24">
           <AnimatePresence mode="popLayout">
             <motion.h1
               key={currentFontIndex}
-              className={`text-4xl sm:text-7xl font-bold leading-tight ${fonts[currentFontIndex]}`}
+              className={`text-4xl sm:text-7xl font-bold leading-tight ${fonts[currentFontIndex]} text-fontPrimary-light dark:text-fontPrimary`}
               initial="enter"
               animate="center"
               exit="exit"
@@ -128,7 +132,7 @@ const HeroSection: React.FC = () => {
         </div>
 
         <motion.p
-          className="text-xl sm:text-4xl w-full sm:w-1/2 font-light"
+          className="text-xl sm:text-4xl w-full sm:w-3/4 font-light text-fontPrimary-light dark:text-fontPrimary"
           initial={{ opacity: 0, y: 50 }}
           animate={animationComplete ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, delay: 0.2 }}
@@ -144,7 +148,7 @@ const HeroSection: React.FC = () => {
           className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 sm:gap-6 mt-8"
         >
           <motion.a
-            className="flex gap-1 bg-accentPurple3 hover:bg-accentPurple4 transition-colors items-center justify-center px-6 rounded-lg text-sm py-3 sm:py-2"
+            className="flex gap-1 bg-accentPurple3-light dark:bg-accentPurple3 hover:bg-accentPurple4-light dark:hover:bg-accentPurple4 transition-colors items-center justify-center px-6 rounded-lg text-sm py-3 sm:py-2 text-fontPrimary-light dark:text-fontPrimary"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             href="#contact"
@@ -157,7 +161,7 @@ const HeroSection: React.FC = () => {
           <motion.a
             href="/sanskar-resume.pdf"
             download={"Sanskar_Sharma_Resume.pdf"}
-            className="flex gap-1 bg-accentPurple2 hover:bg-accentPurple3 transition-colors items-center justify-center px-6 rounded-lg text-sm py-3 sm:py-2"
+            className="flex gap-1 bg-accentPurple2-light dark:bg-accentPurple2 hover:bg-accentPurple3-light dark:hover:bg-accentPurple3 transition-colors items-center justify-center px-6 rounded-lg text-sm py-3 sm:py-2 text-fontPrimary-light dark:text-fontPrimary"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >

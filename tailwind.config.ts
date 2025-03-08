@@ -10,13 +10,34 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        bgDark: "#190019",
-        fontPrimary: "#FBE4D8",
-        fontSecondary: "#DFB6B2",
-        accentPurple1: "#1E0528",
-        accentPurple2: "#3B1A41",
-        accentPurple3: "#4F2742",
-        accentPurple4: "#543747",
+        bgDark: {
+          DEFAULT: "#0D000D", // Darker background
+          light: "#F8F2FF", // Light mode background
+        },
+        fontPrimary: {
+          DEFAULT: "#FBE4D8", // Dark mode text
+          light: "#1F0A21", // Light mode text
+        },
+        fontSecondary: {
+          DEFAULT: "#DFB6B2", // Dark mode secondary text
+          light: "#3B1A41", // Light mode secondary text
+        },
+        accentPurple1: {
+          DEFAULT: "#140319", // Darker accent
+          light: "#F1E3F9", // Light mode accent
+        },
+        accentPurple2: {
+          DEFAULT: "#2A1130", // Darker accent
+          light: "#E0C6E9", // Light mode accent
+        },
+        accentPurple3: {
+          DEFAULT: "#3C1E33", // Darker accent
+          light: "#D2B1DE", // Light mode accent
+        },
+        accentPurple4: {
+          DEFAULT: "#452C3B", // Darker accent
+          light: "#C092CF", // Light mode accent
+        },
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {
