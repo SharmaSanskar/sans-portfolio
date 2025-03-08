@@ -8,7 +8,7 @@ import WorkSection from "./components/WorkSection";
 
 export default function Home() {
   return (
-    <div className="bg-bgDark text-fontPrimary relative">
+    <div className="dark:bg-bgDark bg-bgDark-light dark:text-fontPrimary text-fontPrimary-light relative">
       {/* Desktop navbar positioning */}
       <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[200] hidden md:block">
         <Navbar />
@@ -29,7 +29,7 @@ export default function Home() {
       </div>
 
       {/* Footer */}
-      <div className="bg-accentPurple1 flex items-center justify-center h-20">
+      <div className="dark:bg-accentPurple1 bg-accentPurple1-light flex items-center justify-center h-20">
         <Footer />
       </div>
     </div>

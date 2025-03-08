@@ -42,35 +42,39 @@ const AboutSection = () => {
 
   return (
     <section
-      className="relative min-h-screen p-4 sm:p-8"
+      className="relative min-h-screen p-4 sm:p-8 dark:bg-bgDark bg-bgDark-light"
       ref={sectionRef}
       id="about"
     >
       <div className="hidden md:flex absolute -left-12 items-center top-1/2 -translate-y-1/2">
         <div className="transform -rotate-90 text-4xl tracking-widest font-bold flex items-center gap-3">
-          <div className="w-1 h-1 bg-accentPurple4"></div>
-          <div className="w-12 h-1 bg-accentPurple4"></div>
-          <h1 className="font">ABOUT</h1>
+          <div className="w-1 h-1 dark:bg-accentPurple4 bg-accentPurple4-light"></div>
+          <div className="w-12 h-1 dark:bg-accentPurple4 bg-accentPurple4-light"></div>
+          <h1 className="font dark:text-fontPrimary text-fontPrimary-light">
+            ABOUT
+          </h1>
         </div>
       </div>
 
       {/* Mobile title */}
       <div className="md:hidden text-center my-4">
-        <h1 className="text-3xl font-bold tracking-widest">ABOUT</h1>
+        <h1 className="text-3xl font-bold tracking-widest dark:text-fontPrimary text-fontPrimary-light">
+          ABOUT
+        </h1>
         <div className="flex justify-center gap-2 mt-2">
-          <div className="w-12 h-1 bg-accentPurple4"></div>
-          <div className="w-1 h-1 bg-accentPurple4"></div>
+          <div className="w-12 h-1 dark:bg-accentPurple4 bg-accentPurple4-light"></div>
+          <div className="w-1 h-1 dark:bg-accentPurple4 bg-accentPurple4-light"></div>
         </div>
       </div>
 
       {/* Main content container */}
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         {/* Name and image section */}
         <div className="relative h-[200px] sm:h-[300px] flex items-center justify-center">
           {/* Background "Sanskar" */}
           <motion.div
             style={{ x: isMdScreen ? leftX : mobileLeftX }}
-            className="absolute text-3xl md:text-8xl sm:text-5xl font-bold text-fontSecondary z-0"
+            className="absolute text-3xl md:text-8xl sm:text-5xl font-bold dark:text-fontSecondary text-fontSecondary-light z-0"
           >
             <h1>Sanskar</h1>
           </motion.div>
@@ -94,32 +98,31 @@ const AboutSection = () => {
           {/* Foreground "Sharma" */}
           <motion.div
             style={{ x: isMdScreen ? rightX : mobileRightX }}
-            className="absolute text-3xl md:text-8xl sm:text-5xl font-bold text-fontPrimary z-20"
+            className="absolute text-3xl md:text-8xl sm:text-5xl font-bold dark:text-fontPrimary text-fontPrimary-light z-20"
           >
             <h1>Sharma</h1>
           </motion.div>
         </div>
-
-        {/* About text */}
+        {/* About text */}{" "}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 20 }}
           transition={{ duration: 0.8, delay: 0.3 }}
-          className="space-y-6 text-base sm:text-xl font-normal mb-12 w-full sm:w-3/4 mx-auto px-4 sm:px-0"
+          className="space-y-6 text-base sm:text-xl font-normal mb-12 w-full sm:w-3/4 mx-auto px-4 sm:px-0 dark:text-fontSecondary text-fontSecondary-light"
         >
           <p>
             Hey there! I’m Sanskar Sharma—a software developer, problem-solver,
             , and professional Googler of obscure errors. Currently, I’m in
             Boston, pursuing my Master’s in Computer Science at Northeastern
             University (which basically means balancing code, coffee, and the
-            occasional existential crisis over semicolons).
+            occasional existential crisis over semicolons).{" "}
           </p>
           <p>
             I’ve built full-stack applications using modern web technologies,
             working on everything from sleek UIs to efficient backend systems. I
             love making things work—whether that’s debugging an application or
             figuring out why my WiFi suddenly hates me. Machine learning? Web
-            development? UI/UX? If it’s tech, I’m in.
+            development? UI/UX? If it’s tech, I’m in.{" "}
           </p>
           <p>
             When I’m not knee-deep in code, I’m probably geeking out over the
@@ -129,7 +132,6 @@ const AboutSection = () => {
             no promises).
           </p>
         </motion.div>
-
         {/* Infinitely scrolling interests */}
         <div className="overflow-hidden relative">
           <div className="flex">
@@ -149,7 +151,7 @@ const AboutSection = () => {
                 {interests.map((interest, index) => (
                   <span
                     key={index}
-                    className="inline-block font-bold text-accentPurple4 text-lg sm:text-2xl px-3 sm:px-4 whitespace-nowrap"
+                    className="inline-block font-bold dark:text-accentPurple4 text-accentPurple4-light text-lg sm:text-2xl px-3 sm:px-4 whitespace-nowrap"
                   >
                     {interest}
                   </span>

@@ -100,34 +100,38 @@ const ContactSection = () => {
 
   return (
     <div
-      className="relative min-h-[80vh] p-4 md:p-8"
+      className="relative min-h-[80vh] p-4 md:p-8 dark:bg-bgDark bg-bgDark-light"
       ref={sectionRef}
       id="contact"
     >
       {/* Desktop title */}
       <div className="hidden md:flex absolute -right-12 top-1/2 -translate-y-1/2 items-center">
         <div className="transform rotate-90 text-4xl tracking-widest font-bold flex items-center gap-3">
-          <h1 className="font">CONTACT</h1>
-          <div className="w-12 h-1 bg-accentPurple4"></div>
-          <div className="w-1 h-1 bg-accentPurple4"></div>
+          <h1 className="font dark:text-fontPrimary text-fontPrimary-light">
+            CONTACT
+          </h1>
+          <div className="w-12 h-1 dark:bg-accentPurple4 bg-accentPurple4-light"></div>
+          <div className="w-1 h-1 dark:bg-accentPurple4 bg-accentPurple4-light"></div>
         </div>
       </div>
 
       {/* Mobile title */}
       <div className="md:hidden text-center my-4">
-        <h1 className="text-3xl font-bold tracking-widest">CONTACT</h1>
+        <h1 className="text-3xl font-bold tracking-widest dark:text-fontPrimary text-fontPrimary-light">
+          CONTACT
+        </h1>
         <div className="flex justify-center gap-2 mt-2">
-          <div className="w-12 h-1 bg-accentPurple4"></div>
-          <div className="w-1 h-1 bg-accentPurple4"></div>
+          <div className="w-12 h-1 dark:bg-accentPurple4 bg-accentPurple4-light"></div>
+          <div className="w-1 h-1 dark:bg-accentPurple4 bg-accentPurple4-light"></div>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto flex-1">
+      <div className="max-w-5xl mx-auto flex-1">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16">
           {/* Left side - Social Links */}
           <div className="space-y-6 md:space-y-8">
             <motion.h2
-              className="text-xl md:text-3xl font-bold mb-6 md:mb-8 text-center md:text-left"
+              className="text-xl md:text-3xl font-bold mb-6 md:mb-8 text-center md:text-left dark:text-fontPrimary text-fontPrimary-light"
               initial={{ opacity: 0, x: -50 }}
               animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -50 }}
               transition={{ duration: 0.5 }}
@@ -146,12 +150,15 @@ const ContactSection = () => {
                   href={link.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center space-x-4 text-fontPrimary hover:text-fontSecondary hover:font-bold transition-colors duration-300"
+                  className="flex items-center space-x-4 dark:text-fontPrimary text-fontPrimary-light hover:dark:text-fontSecondary hover:text-fontSecondary-light hover:font-bold transition-colors duration-300"
                   variants={linkVariants}
                   whileHover={{ x: 10 }}
                 >
-                  <div className="w-9 h-9 rounded-full bg-accentPurple2 flex items-center justify-center">
-                    <link.icon size={20} />
+                  <div className="w-9 h-9 rounded-full dark:bg-accentPurple2 bg-accentPurple2-light flex items-center justify-center">
+                    <link.icon
+                      size={20}
+                      className="dark:text-fontPrimary text-fontPrimary-light"
+                    />
                   </div>
                   <span>{link.text}</span>
                 </motion.a>
@@ -163,7 +170,7 @@ const ContactSection = () => {
           <div>
             <form
               onSubmit={handleSubmit}
-              className="space-y-4 text-fontPrimary"
+              className="space-y-4 dark:text-fontPrimary text-fontPrimary-light"
             >
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <input
@@ -172,7 +179,7 @@ const ContactSection = () => {
                   placeholder="Name"
                   value={formData.name}
                   onChange={handleChange}
-                  className="p-3 bg-accentPurple1 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 w-full"
+                  className="p-3 dark:bg-accentPurple1 bg-accentPurple1-light rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 w-full dark:text-fontPrimary text-fontPrimary-light"
                   required
                 />
                 <input
@@ -181,7 +188,7 @@ const ContactSection = () => {
                   placeholder="Email"
                   value={formData.email}
                   onChange={handleChange}
-                  className="p-3 bg-accentPurple1 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 w-full"
+                  className="p-3 dark:bg-accentPurple1 bg-accentPurple1-light rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 w-full dark:text-fontPrimary text-fontPrimary-light"
                   required
                 />
               </div>
@@ -191,18 +198,22 @@ const ContactSection = () => {
                 value={formData.message}
                 onChange={handleChange}
                 rows={6}
-                className="w-full p-3 bg-accentPurple1 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300"
+                className="w-full p-3 dark:bg-accentPurple1 bg-accentPurple1-light rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 dark:text-fontPrimary text-fontPrimary-light"
                 required
               />
               <motion.button
                 type="submit"
-                className="w-full p-3 bg-accentPurple2 rounded-md hover:bg-accentPurple3 transition-colors duration-300"
+                className="w-full p-3 dark:bg-accentPurple2 bg-accentPurple2-light rounded-md dark:hover:bg-accentPurple3 hover:bg-accentPurple3-light transition-colors duration-300 dark:text-fontPrimary text-fontPrimary-light"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
                 Send Message
               </motion.button>
-              {status && <p className="text-sm mt-2 text-center">{status}</p>}
+              {status && (
+                <p className="text-sm mt-2 text-center dark:text-fontPrimary text-fontPrimary-light">
+                  {status}
+                </p>
+              )}
             </form>
           </div>
         </div>

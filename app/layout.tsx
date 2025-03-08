@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Quicksand } from "next/font/google";
 import "./globals.scss";
+import ThemeProvider from "./ThemeProvider";
 
 export const metadata: Metadata = {
   title: "Sanskar - Portfolio",
@@ -16,7 +17,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body className={quicksand.className}>{children}</body>
+      <body className={quicksand.className}>
+        <ThemeProvider>{children}</ThemeProvider>
+      </body>
     </html>
   );
 }
