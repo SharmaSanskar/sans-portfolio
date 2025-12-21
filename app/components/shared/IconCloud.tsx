@@ -1,10 +1,14 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from 'react';
-import { Cloud, fetchSimpleIcons, renderSimpleIcon } from 'react-icon-cloud';
+import React, { useEffect, useMemo, useState, useCallback } from 'react';
+import { Cloud, fetchSimpleIcons, renderSimpleIcon, SimpleIcon } from 'react-icon-cloud';
 
 type IconCloudProps = {
     size?: number;
+};
+
+type IconData = {
+    simpleIcons: Record<string, SimpleIcon>;
 };
 
 const slugs = [
@@ -42,7 +46,7 @@ const slugs = [
 
 const IconCloud: React.FC<IconCloudProps> = ({ size = 420 }) => {
     const iconSlugs = slugs;
-    const [data, setData] = useState<{ simpleIcons: Record<string, any>; allIcon: any }>({ simpleIcons: {}, allIcon: {} });
+    const [data, setData] = useState<IconData>({ simpleIcons: {} });
     const [theme] = useState<'light' | 'dark'>('dark');
 
     useEffect(() => {
@@ -81,7 +85,7 @@ const IconCloud: React.FC<IconCloudProps> = ({ size = 420 }) => {
         },
     };
 
-    const renderCustomIcon = (icon: any) => {
+    const renderCustomIcon = useCallback((icon: SimpleIcon) => {
         const bgHex = theme === 'light' ? '#f3f2ef' : '#080510';
         const fallbackHex = theme === 'light' ? '#6e6e73' : '#ffffff';
         const minContrastRatio = theme === 'dark' ? 2 : 1.2;
@@ -96,15 +100,15 @@ const IconCloud: React.FC<IconCloudProps> = ({ size = 420 }) => {
                 href: undefined,
                 target: undefined,
                 rel: undefined,
-                onClick: (e: any) => e.preventDefault(),
+                onClick: (e: React.MouseEvent) => e.preventDefault(),
             },
         });
-    };
+    }, [theme]);
 
     const renderedIcons = useMemo(() => {
         if (!data || Object.keys(data.simpleIcons).length === 0) return [];
         return Object.values(data.simpleIcons).map((icon) => renderCustomIcon(icon));
-    }, [data]);
+    }, [data, renderCustomIcon]);
 
     return (
         <div className="flex items-center justify-center p-0 m-0">
