@@ -5,6 +5,7 @@ import ProjectSection from "./components/ProjectSection";
 import Footer from "./components/shared/Footer";
 import Navbar from "./components/shared/Navbar";
 import WorkSection from "./components/WorkSection";
+import SkillSection from "./components/SkillSection";
 
 export default function Home() {
   return (
@@ -20,6 +21,7 @@ export default function Home() {
         <ProjectSection />
         <WorkSection />
         <AboutSection />
+        <SkillSection />
         <ContactSection />
       </main>
 

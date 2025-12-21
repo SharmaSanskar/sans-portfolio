@@ -100,18 +100,18 @@ const ContactSection = () => {
 
   return (
     <div
-      className="relative min-h-[80vh] p-4 md:p-8 dark:bg-bgDark bg-bgDark-light"
+      className="relative py-24 md:py-36 px-4 sm:px-8 dark:bg-bgDark bg-bgDark-light"
       ref={sectionRef}
       id="contact"
     >
       {/* Desktop title */}
-      <div className="hidden md:flex absolute -right-12 top-1/2 -translate-y-1/2 items-center">
-        <div className="transform rotate-90 text-4xl tracking-widest font-bold flex items-center gap-3">
+      <div className="hidden md:flex absolute -left-12 items-center top-1/2 -translate-y-1/2">
+        <div className="transform -rotate-90 text-4xl tracking-widest font-bold flex items-center gap-3">
+          <div className="w-1 h-1 dark:bg-accentPurple4 bg-accentPurple4-light"></div>
+          <div className="w-12 h-1 dark:bg-accentPurple4 bg-accentPurple4-light"></div>
           <h1 className="font dark:text-fontPrimary text-fontPrimary-light">
             CONTACT
           </h1>
-          <div className="w-12 h-1 dark:bg-accentPurple4 bg-accentPurple4-light"></div>
-          <div className="w-1 h-1 dark:bg-accentPurple4 bg-accentPurple4-light"></div>
         </div>
       </div>
 
@@ -126,8 +126,8 @@ const ContactSection = () => {
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto flex-1">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16">
+      <div className="max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 w-full items-center">
           {/* Left side - Social Links */}
           <div className="space-y-6 md:space-y-8">
             <motion.h2
@@ -167,10 +167,10 @@ const ContactSection = () => {
           </div>
 
           {/* Right side - Contact Form */}
-          <div>
+          <div className="flex items-center justify-center">
             <form
               onSubmit={handleSubmit}
-              className="space-y-4 dark:text-fontPrimary text-fontPrimary-light"
+              className="w-full max-w-xl sm:max-w-lg md:max-w-lg space-y-4 px-4 sm:px-0 dark:text-fontPrimary text-fontPrimary-light"
             >
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <input
@@ -197,8 +197,7 @@ const ContactSection = () => {
                 placeholder="Message"
                 value={formData.message}
                 onChange={handleChange}
-                rows={6}
-                className="w-full p-3 dark:bg-accentPurple1 bg-accentPurple1-light rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 dark:text-fontPrimary text-fontPrimary-light"
+                className="w-full p-3 dark:bg-accentPurple1 bg-accentPurple1-light rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 dark:text-fontPrimary text-fontPrimary-light resize-none h-40 md:h-56"
                 required
               />
               <motion.button

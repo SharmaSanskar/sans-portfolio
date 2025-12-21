@@ -1,309 +1,373 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { motion, useAnimation, AnimatePresence } from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { Download, ChevronRight } from "lucide-react";
 import ThemeToggle from "../components/shared/ThemeToggle";
+import { cn } from "@/lib/utils";
 
-const HeroSection: React.FC = () => {
-  const [animationComplete, setAnimationComplete] = useState(false);
-  const [currentFontIndex, setCurrentFontIndex] = useState(0);
+// Custom hook to track mouse position
+function useMousePosition() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const textRef = useRef<HTMLDivElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const blob1Controls = useAnimation();
-  const blob2Controls = useAnimation();
-  const blob3Controls = useAnimation();
-  const blob4Controls = useAnimation();
-
-  const fonts = [
-    "font-sora",
-    "font-alegreya",
-    "font-cairo",
-    "font-fauna",
-    "font-karma",
-    "font-merriweather",
-    "font-montserrat",
-    "font-playfair",
-    "font-lora",
-  ];
-
-  // Function to calculate blob movement based on mouse position
-  const calculateBlobMovement = (blobPosition) => {
-    if (!containerRef.current) return { x: 0, y: 0 };
-
-    const containerRect = containerRef.current.getBoundingClientRect();
-    const containerCenterX = containerRect.left + containerRect.width / 2;
-    const containerCenterY = containerRect.top + containerRect.height / 2;
-
-    // Calculate distance from mouse to blob
-    const dx = mousePosition.x - (containerCenterX + blobPosition.x);
-    const dy = mousePosition.y - (containerCenterY + blobPosition.y);
-    const distance = Math.sqrt(dx * dx + dy * dy);
-
-    // Movement is inversely proportional to distance (closer = more movement)
-    // and is limited to a maximum of 30px
-    const maxMove = 40;
-    const moveStrength = 500; // Higher = more responsive
-    const moveX = Math.min(
-      maxMove,
-      ((dx / distance) * moveStrength) / (distance * 0.05)
-    );
-    const moveY = Math.min(
-      maxMove,
-      ((dy / distance) * moveStrength) / (distance * 0.05)
-    );
-
-    // Return movement only if mouse is relatively close
-    return distance < 400 ? { x: -moveX, y: -moveY } : { x: 0, y: 0 };
-  };
 
   useEffect(() => {
-    const handleMouseMove = (e) => {
+    const updateMousePosition = (e: MouseEvent) => {
       setMousePosition({ x: e.clientX, y: e.clientY });
     };
 
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-    };
+    window.addEventListener("mousemove", updateMousePosition);
+    return () => window.removeEventListener("mousemove", updateMousePosition);
   }, []);
 
-  useEffect(() => {
-    // Initial animation
-    const animateLines = async () => {
-      await Promise.all([
-        blob1Controls.start({
-          scale: 1,
-          opacity: 1,
-          transition: { duration: 0.5, delay: 0.2 },
-        }),
-        blob2Controls.start({
-          scale: 1,
-          opacity: 1,
-          transition: { duration: 0.5, delay: 0.6 },
-        }),
-        blob3Controls.start({
-          scale: 1,
-          opacity: 1,
-          transition: { duration: 0.5, delay: 0.7 },
-        }),
-        blob4Controls.start({
-          scale: 1,
-          opacity: 1,
-          transition: { duration: 0.5, delay: 1.2 },
-        }),
-      ]);
+  return mousePosition;
+}
 
-      setAnimationComplete(true);
+// Eye component with pupil tracking
+interface EyeProps {
+  mouseX: number;
+  mouseY: number;
+  eyeRef: React.RefObject<HTMLDivElement>;
+  isBlinking: boolean;
+}
+
+function Eye({ mouseX, mouseY, eyeRef, isBlinking }: EyeProps) {
+  const [eyeCenter, setEyeCenter] = useState({ x: 0, y: 0 });
+
+  // Spring physics for smooth pupil movement
+  const pupilX = useMotionValue(0);
+  const pupilY = useMotionValue(0);
+  const springX = useSpring(pupilX, { stiffness: 150, damping: 20 });
+  const springY = useSpring(pupilY, { stiffness: 150, damping: 20 });
+
+  useEffect(() => {
+    if (eyeRef.current) {
+      const rect = eyeRef.current.getBoundingClientRect();
+      setEyeCenter({
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2,
+      });
+    }
+  }, [eyeRef]);
+
+  useEffect(() => {
+    // Calculate angle between eye center and cursor
+    const dx = mouseX - eyeCenter.x;
+    const dy = mouseY - eyeCenter.y;
+    const angle = Math.atan2(dy, dx);
+
+    // Limit pupil movement to stay within eye bounds
+    const maxDistance = 6;
+    const newX = Math.cos(angle) * maxDistance;
+    const newY = Math.sin(angle) * maxDistance;
+
+    pupilX.set(newX);
+    pupilY.set(newY);
+  }, [mouseX, mouseY, eyeCenter, pupilX, pupilY]);
+
+  return (
+    <motion.div
+      ref={eyeRef}
+      className="relative w-12 h-12 bg-white rounded-full flex items-center justify-center"
+      animate={{ scaleY: isBlinking ? 0.1 : 1 }}
+      transition={{ duration: 0.1 }}
+    >
+      <motion.div
+        className="w-6 h-6 bg-black rounded-full"
+        style={{
+          x: springX,
+          y: springY,
+        }}
+      />
+    </motion.div>
+  );
+}
+
+// Character component
+interface CharacterProps {
+  color: string;
+  width: string;
+  height: string;
+  mouseX: number;
+  mouseY: number;
+  isNameHovered: boolean;
+}
+
+function Character({ color, width, height, mouseX, mouseY, isNameHovered }: CharacterProps) {
+  const leftEyeRef = useRef<HTMLDivElement>(null);
+  const rightEyeRef = useRef<HTMLDivElement>(null);
+  const characterRef = useRef<HTMLDivElement>(null);
+  const [isBlinking, setIsBlinking] = useState(false);
+
+  // Parallax tilt effect
+  const rotateX = useTransform(useMotionValue(mouseY), [0, window.innerHeight], [5, -5]);
+  const rotateY = useTransform(useMotionValue(mouseX), [0, window.innerWidth], [-5, 5]);
+
+  // Synchronized blinking for both eyes
+  useEffect(() => {
+    const blink = () => {
+      setIsBlinking(true);
+      setTimeout(() => setIsBlinking(false), 150);
     };
 
-    animateLines();
-  }, []);
-
-  // Effect for font cycling
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentFontIndex((prev) => (prev + 1) % fonts.length);
-    }, 5000);
-
+    const interval = setInterval(blink, Math.random() * 3000 + 3000);
     return () => clearInterval(interval);
   }, []);
 
-  // Effect for blob movement based on mouse position
+  return (
+    <motion.div
+      ref={characterRef}
+      className={`${color} ${width} ${height} rounded-2xl flex flex-col items-center justify-start pt-8 gap-4`}
+      style={{
+        rotateX,
+        rotateY,
+        transformStyle: "preserve-3d",
+      }}
+      whileHover={{ y: -10, rotate: 2 }}
+      animate={{
+        y: [0, -5, 0],
+      }}
+      transition={{
+        y: {
+          duration: 2,
+          repeat: Infinity,
+          ease: "easeInOut",
+        },
+      }}
+    >
+      <div className="flex gap-4">
+        <Eye mouseX={mouseX} mouseY={mouseY} eyeRef={leftEyeRef} isBlinking={isBlinking} />
+        <Eye mouseX={mouseX} mouseY={mouseY} eyeRef={rightEyeRef} isBlinking={isBlinking} />
+      </div>
+      
+      {/* Mouth - animates when name is hovered */}
+      <motion.div
+        className="bg-white mt-2"
+        animate={{
+          width: isNameHovered ? "24px" : "32px",
+          height: isNameHovered ? "24px" : "16px",
+          borderRadius: isNameHovered ? "50%" : "0 0 50% 50%",
+        }}
+        transition={{
+          duration: 0.3,
+          ease: "easeOut",
+        }}
+      />
+    </motion.div>
+  );
+}
+
+// Magnetic Text component
+interface MagneticTextProps {
+  text: string;
+  hoverText?: string;
+  className?: string;
+  onHoverChange?: (isHovered: boolean) => void;
+}
+
+function MagneticText({ text = "CREATIVE", hoverText = "EXPLORE", className, onHoverChange }: MagneticTextProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const circleRef = useRef<HTMLDivElement>(null);
+  const innerTextRef = useRef<HTMLDivElement>(null);
+  const [isHovered, setIsHovered] = useState(false);
+  const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
+
+  const mousePos = useRef({ x: 0, y: 0 });
+  const currentPos = useRef({ x: 0, y: 0 });
+  const animationFrameRef = useRef<number>();
+
   useEffect(() => {
-    if (!animationComplete) return;
+    const updateSize = () => {
+      if (containerRef.current) {
+        setContainerSize({
+          width: containerRef.current.offsetWidth,
+          height: containerRef.current.offsetHeight,
+        });
+      }
+    };
+    updateSize();
+    window.addEventListener("resize", updateSize);
+    return () => window.removeEventListener("resize", updateSize);
+  }, []);
 
-    const blob1Position = { x: 200, y: 100 };
-    const blob2Position = { x: -150, y: -50 };
-    const blob3Position = { x: 100, y: -180 };
-    const blob4Position = { x: -180, y: 100 };
+  useEffect(() => {
+    const lerp = (start: number, end: number, factor: number) => start + (end - start) * factor;
 
-    // Combine heartbeat with position movement
-    // small right
-    const animateBlob1 = async () => {
-      await blob1Controls.start({
-        ...calculateBlobMovement(blob1Position),
-        scale: [1, 1.08, 1],
-        transition: {
-          x: { type: "spring", stiffness: 50, damping: 30 },
-          y: { type: "spring", stiffness: 50, damping: 30 },
-          scale: {
-            duration: 1.6,
-            repeat: Infinity,
-            repeatType: "reverse",
-          },
-        },
-      });
+    const animate = () => {
+      currentPos.current.x = lerp(currentPos.current.x, mousePos.current.x, 0.15);
+      currentPos.current.y = lerp(currentPos.current.y, mousePos.current.y, 0.15);
+
+      if (circleRef.current) {
+        circleRef.current.style.transform = `translate(${currentPos.current.x}px, ${currentPos.current.y}px) translate(-50%, -50%)`;
+      }
+
+      if (innerTextRef.current) {
+        innerTextRef.current.style.transform = `translate(${-currentPos.current.x}px, ${-currentPos.current.y}px)`;
+      }
+
+      animationFrameRef.current = requestAnimationFrame(animate);
     };
 
-    // big left
-    const animateBlob2 = async () => {
-      await blob2Controls.start({
-        ...calculateBlobMovement(blob2Position),
-        scale: [1, 1.03, 1],
-        transition: {
-          x: { type: "spring", stiffness: 40, damping: 25 },
-          y: { type: "spring", stiffness: 40, damping: 25 },
-          scale: {
-            duration: 1.8,
-            repeat: Infinity,
-            repeatType: "reverse",
-          },
-        },
-      });
+    animationFrameRef.current = requestAnimationFrame(animate);
+    return () => {
+      if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
     };
+  }, []);
 
-    // big right
-    const animateBlob3 = async () => {
-      await blob3Controls.start({
-        ...calculateBlobMovement(blob3Position),
-        scale: [1, 1.02, 1],
-        transition: {
-          x: { type: "spring", stiffness: 30, damping: 20 },
-          y: { type: "spring", stiffness: 30, damping: 20 },
-          scale: {
-            duration: 2.2,
-            repeat: Infinity,
-            repeatType: "reverse",
-          },
-        },
-      });
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    mousePos.current = {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
     };
-
-    // small left
-    const animateBlob4 = async () => {
-      await blob4Controls.start({
-        ...calculateBlobMovement(blob4Position),
-        scale: [1, 1.09, 1],
-        transition: {
-          x: { type: "spring", stiffness: 60, damping: 35 },
-          y: { type: "spring", stiffness: 60, damping: 35 },
-          scale: {
-            duration: 2,
-            repeat: Infinity,
-            repeatType: "reverse",
-          },
-        },
-      });
-    };
-
-    animateBlob1();
-    animateBlob2();
-    animateBlob3();
-    animateBlob4();
-  }, [mousePosition, animationComplete]);
-
-  const variants = {
-    enter: {
-      y: 50,
-      opacity: 0,
-    },
-    center: {
-      y: 0,
-      opacity: 1,
-    },
-    exit: {
-      y: -50,
-      opacity: 0,
-    },
   };
+
+  const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    mousePos.current = { x, y };
+    currentPos.current = { x, y };
+    setIsHovered(true);
+    if (onHoverChange) onHoverChange(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    if (onHoverChange) onHoverChange(false);
+  };
+
+  return (
+    <div
+      ref={containerRef}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      className={cn("relative inline-flex items-center justify-center cursor-none select-none", className)}
+    >
+      <span className="text-4xl sm:text-7xl font-bold tracking-tighter text-fontPrimary-light dark:text-fontPrimary tracking-wide">
+        {text}
+      </span>
+
+      <div
+        ref={circleRef}
+        className="absolute top-0 left-0 pointer-events-none rounded-full bg-fontPrimary-light dark:bg-fontPrimary overflow-hidden"
+        style={{
+          width: isHovered ? 200 : 0,
+          height: isHovered ? 200 : 0,
+          transition: "width 0.5s cubic-bezier(0.33, 1, 0.68, 1), height 0.5s cubic-bezier(0.33, 1, 0.68, 1)",
+          willChange: "transform, width, height",
+        }}
+      >
+        <div
+          ref={innerTextRef}
+          className="absolute flex items-center justify-center"
+          style={{
+            width: containerSize.width,
+            height: containerSize.height,
+            top: "50%",
+            left: "50%",
+            willChange: "transform",
+          }}
+        >
+          <span className="text-4xl sm:text-7xl font-bold tracking-tighter text-bgDark-light dark:text-bgDark whitespace-nowrap tracking-wide">
+            {hoverText}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Main Hero Section
+const HeroSection: React.FC = () => {
+  const [animationComplete, setAnimationComplete] = useState(false);
+  const [isNameHovered, setIsNameHovered] = useState(false);
+  const { x: mouseX, y: mouseY } = useMousePosition();
+
+  useEffect(() => {
+    setTimeout(() => {
+      setAnimationComplete(true);
+    }, 300);
+  }, []);
 
   return (
     <div
       className="relative min-h-screen flex items-center p-4 sm:p-8 overflow-hidden bg-bgDark-light dark:bg-bgDark"
       id="home"
-      ref={containerRef}
+      style={{ perspective: "1000px" }}
     >
-      {/* Theme Toggle */}
       <ThemeToggle />
 
-      {/* Blobs with combined heartbeat + cursor following effects */}
-      <motion.div
-        className="absolute bottom-16 right-8 sm:right-64 w-24 sm:w-32 h-24 sm:h-32 bg-accentPurple1-light dark:bg-accentPurple1 rounded-full z-0 backdrop-blur-sm"
-        initial={{ scale: 0, opacity: 0 }}
-        animate={blob1Controls}
-        whileHover={{ scale: 1.1 }}
-      />
-      <motion.div
-        className="absolute -right-8 bottom-80 sm:bottom-16 sm:-left-16 w-32 sm:w-48 h-32 sm:h-48 bg-accentPurple2-light dark:bg-accentPurple2 rounded-full z-0 backdrop-blur-sm"
-        initial={{ scale: 0, opacity: 0 }}
-        animate={blob2Controls}
-        whileHover={{ scale: 1.1 }}
-      />
-      <motion.div
-        className="hidden md:block absolute bottom-48 sm:bottom-80 -right-4 sm:-right-6 w-48 sm:w-64 h-48 sm:h-64 bg-accentPurple3-light dark:bg-accentPurple3 rounded-full z-0 backdrop-blur-sm"
-        initial={{ scale: 0, opacity: 0 }}
-        animate={blob3Controls}
-        whileHover={{ scale: 1.1 }}
-      />
-      <motion.div
-        className="absolute bottom-20 left-4 sm:bottom-72 sm:left-10 w-12 sm:w-16 h-12 sm:h-16 bg-accentPurple4-light dark:bg-accentPurple4 rounded-full z-0 backdrop-blur-sm"
-        initial={{ scale: 0, opacity: 0 }}
-        animate={blob4Controls}
-        whileHover={{ scale: 1.1 }}
-      />
+      <div className="max-w-7xl mx-auto w-full flex flex-col lg:flex-row items-center justify-between gap-8">
+        {/* Left Half - Content */}
+        <div className="w-full lg:w-1/2 flex flex-col items-center lg:items-start text-center lg:text-left">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={animationComplete ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.7, delay: 0.1 }}
+            className="mb-4"
+          >
+            <MagneticText 
+              text="Sanskar Sharma" 
+              hoverText="Hello There :))" 
+              className="font-sora" 
+              onHoverChange={setIsNameHovered}
+            />
+          </motion.div>
 
-      {/* Content with higher z-index */}
-      <div className="max-w-4xl mx-auto w-full relative z-10" ref={textRef}>
-        <div className="relative h-16 sm:h-24">
-          <AnimatePresence mode="popLayout">
-            <motion.h1
-              key={currentFontIndex}
-              className={`text-4xl sm:text-7xl font-bold leading-tight ${fonts[currentFontIndex]} text-fontPrimary-light dark:text-fontPrimary`}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              variants={variants}
-              transition={{
-                y: { type: "spring", stiffness: 200, damping: 40 },
-                opacity: { duration: 0.4 },
-              }}
+          <motion.p
+            className="text-xl sm:text-3xl w-full font-light text-fontPrimary-light dark:text-fontPrimary mt-6"
+            initial={{ opacity: 0, y: 50 }}
+            animate={animationComplete ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.7, delay: 0.3 }}
+          >
+            A software engineer blending creativity and code to build impactful user experiences.
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={animationComplete ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.7, delay: 0.5 }}
+            className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 mt-8"
+          >
+            <motion.a
+              className="flex gap-1 bg-accentPurple3-light dark:bg-accentPurple3 hover:bg-accentPurple4-light dark:hover:bg-accentPurple4 transition-colors items-center justify-center px-6 rounded-lg text-sm py-3 sm:py-2 text-fontPrimary-light dark:text-fontPrimary"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              href="#contact"
             >
-              I&apos;m Sanskar Sharma
-            </motion.h1>
-          </AnimatePresence>
+              <span>
+                <ChevronRight size={15} />
+              </span>
+              <span>Contact Me</span>
+            </motion.a>
+            <motion.a
+              href="/sanskar-resume.pdf"
+              download={"Sanskar_Sharma_Resume.pdf"}
+              className="flex gap-1 bg-accentPurple2-light dark:bg-accentPurple2 hover:bg-accentPurple3-light dark:hover:bg-accentPurple3 transition-colors items-center justify-center px-6 rounded-lg text-sm py-3 sm:py-2 text-fontPrimary-light dark:text-fontPrimary"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <span>
+                <Download size={15} />
+              </span>
+              <span>Download Resume</span>
+            </motion.a>
+          </motion.div>
         </div>
 
-        <motion.p
-          className="text-xl sm:text-4xl w-full sm:w-3/4 font-light text-fontPrimary-light dark:text-fontPrimary"
-          initial={{ opacity: 0, y: 50 }}
-          animate={animationComplete ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7, delay: 0.2 }}
-        >
-          A software engineer blending creativity and code to build impactful
-          user experiences.
-        </motion.p>
-
+        {/* Right Half - Characters */}
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={animationComplete ? { opacity: 1, y: 0 } : {}}
+          className="w-full lg:w-1/2 flex items-end justify-center -space-x-4"
+          initial={{ opacity: 0, x: 50 }}
+          animate={animationComplete ? { opacity: 1, x: 0 } : {}}
           transition={{ duration: 0.7, delay: 0.4 }}
-          className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 sm:gap-6 mt-8"
         >
-          <motion.a
-            className="flex gap-1 bg-accentPurple3-light dark:bg-accentPurple3 hover:bg-accentPurple4-light dark:hover:bg-accentPurple4 transition-colors items-center justify-center px-6 rounded-lg text-sm py-3 sm:py-2 text-fontPrimary-light dark:text-fontPrimary"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            href="#contact"
-          >
-            <span>
-              <ChevronRight size={15} />
-            </span>
-            <span>Contact Me</span>
-          </motion.a>
-          <motion.a
-            href="/sanskar-resume.pdf"
-            download={"Sanskar_Sharma_Resume.pdf"}
-            className="flex gap-1 bg-accentPurple2-light dark:bg-accentPurple2 hover:bg-accentPurple3-light dark:hover:bg-accentPurple3 transition-colors items-center justify-center px-6 rounded-lg text-sm py-3 sm:py-2 text-fontPrimary-light dark:text-fontPrimary"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <span>
-              <Download size={15} />
-            </span>
-            <span>Download Resume</span>
-          </motion.a>
+          <Character color="bg-purple-600" width="w-32" height="h-64" mouseX={mouseX} mouseY={mouseY} isNameHovered={isNameHovered} />
+          <Character color="bg-purple-500" width="w-40" height="h-48" mouseX={mouseX} mouseY={mouseY} isNameHovered={isNameHovered} />
+          <Character color="bg-purple-400" width="w-36" height="h-56" mouseX={mouseX} mouseY={mouseY} isNameHovered={isNameHovered} />
         </motion.div>
       </div>
     </div>
