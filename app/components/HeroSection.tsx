@@ -97,10 +97,33 @@ function Character({ color, width, height, mouseX, mouseY, isNameHovered }: Char
   const rightEyeRef = useRef<HTMLDivElement>(null);
   const characterRef = useRef<HTMLDivElement>(null);
   const [isBlinking, setIsBlinking] = useState(false);
+  const [windowSize, setWindowSize] = useState({ width: 1920, height: 1080 });
+
+  // Track window size
+  useEffect(() => {
+    const updateWindowSize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    updateWindowSize();
+    window.addEventListener("resize", updateWindowSize);
+    return () => window.removeEventListener("resize", updateWindowSize);
+  }, []);
 
   // Parallax tilt effect
-  const rotateX = useTransform(useMotionValue(mouseY), [0, window.innerHeight], [5, -5]);
-  const rotateY = useTransform(useMotionValue(mouseX), [0, window.innerWidth], [-5, 5]);
+  const mouseYMotion = useMotionValue(mouseY);
+  const mouseXMotion = useMotionValue(mouseX);
+  const rotateX = useTransform(mouseYMotion, [0, windowSize.height], [5, -5]);
+  const rotateY = useTransform(mouseXMotion, [0, windowSize.width], [-5, 5]);
+
+  // Update motion values when mouse position changes
+  useEffect(() => {
+    mouseXMotion.set(mouseX);
+    mouseYMotion.set(mouseY);
+  }, [mouseX, mouseY, mouseXMotion, mouseYMotion]);
 
   // Synchronized blinking for both eyes
   useEffect(() => {
